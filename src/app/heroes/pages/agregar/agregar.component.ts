@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
+import { ConfirmComponent } from '../../components/confirm/confirm.component';
 import { Heroe, Publisher } from '../../interfaces/heroes.interfaces';
 import { HeroesService } from '../../services/heroes.service';
 
@@ -38,7 +41,9 @@ export class AgregarComponent implements OnInit {
 
   constructor( private activatedRoute: ActivatedRoute,
               private heroesService: HeroesService,
-              private router: Router ) { }
+              private router: Router,
+              private snackBar: MatSnackBar,
+              public dialog: MatDialog ) { }
 
   ngOnInit(): void {
 
@@ -59,10 +64,15 @@ export class AgregarComponent implements OnInit {
     
     if( this.heroe.id ){
       // editar
-      this.heroesService.actualizarHeroe( this.heroe ).subscribe( console.log );
+      this.heroesService.actualizarHeroe( this.heroe ).subscribe( heroe => {
+        console.log(heroe);
+        this.heroe = heroe;
+        this.mostrarSnackBar('Se actualizó correctamente.');
+      } );
     }else{
       // guardar
       this.heroesService.agregarHeroe( this.heroe ).subscribe( heroe => {
+        this.mostrarSnackBar('Se guardó correctamente.');
         this.router.navigate(['/heroes/editar', heroe.id])
       } );
     }
@@ -70,9 +80,26 @@ export class AgregarComponent implements OnInit {
 
   eliminar(){
 
-    this.heroesService.eliminarHeroe( this.heroe.id! ).subscribe( resp => {
-      this.router.navigate(['/heroes']);
+    const dialog = this.dialog.open( ConfirmComponent, {
+      width: '250px',
+      data: {...this.heroe}
+    } );
+
+    // TODO: Implementar un switchMap para optmizar
+    dialog.afterClosed().subscribe( resp => {
+      if( resp ){
+        this.heroesService.eliminarHeroe( this.heroe.id! ).subscribe( resp => {
+          this.router.navigate(['/heroes']);
+        } );
+      }
     } )
+
+  }
+
+  mostrarSnackBar( mensaje: string ) {
+    this.snackBar.open( mensaje, 'ok!', {
+      duration: 2500
+    });
   }
 
 }
