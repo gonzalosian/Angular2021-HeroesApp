@@ -27,7 +27,7 @@
 
             <a routerLink="./agregar" mat-list-item (click)="sidenav.toggle()">
                 <mat-icon mat-list-icon>add</mat-icon>
-                <span>Agregar Heroe</span>
+                <span>Agregar Héroe</span>
             </a>
 
             <a routerLink="./buscar" mat-list-item (click)="sidenav.toggle()">
@@ -46,7 +46,9 @@
         </button>
 
         <span class="spacer"></span>
-        <button mat-button>Logout</button>
+        <!-- <label> {{ usuarioLogueado }} </label> -->
+        <label> {{ auth.usuario }} </label>
+        <button mat-button (click)="logout()" >Logout</button>
 
     </mat-toolbar>
 
