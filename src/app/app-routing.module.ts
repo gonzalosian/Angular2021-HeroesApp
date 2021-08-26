@@ -7,13 +7,14 @@ import { ErrorPageComponent } from './shared/error-page/error-page.component';
 const routes: Routes = [
   {
     path: 'auth',
-    // "import" devuelve una promesa, por lo que cuando se cague, devuelve el "AuthModule"
+    // "import" devuelve una promesa, por lo que cuando se cargue, devuelve el "AuthModule"
     loadChildren: () => import('./auth/auth.module').then( m => m.AuthModule )
   },
   {
     path: 'heroes',
     loadChildren: () => import('./heroes/heroes.module').then( m => m.HeroesModule ),
-    canLoad: [ AuthGuard ]
+    canLoad: [ AuthGuard ],
+    canActivate: [ AuthGuard ]
   },
   {
     path: '404',
